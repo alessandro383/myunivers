@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyUnivers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div id="loginPage" class="page">
+    <h1 style="font-family: Orbitron; color: #e50914;">Connexion</h1>
+    <input id="loginUser" placeholder="Nom d'utilisateur">
+    <input id="loginPass" type="password" placeholder="Mot de passe">
+    <button onclick="login()">Se connecter</button>
+    <button onclick="showRegister()" style="background:transparent; color:#777">Créer un compte</button>
+    <div id="loginError" class="error-message"></div>
+</div>
+
+<div id="registerPage" class="page hidden">
+    <h1 style="font-family: Orbitron; color: #e50914;">Inscription</h1>
+    <input id="rUser" placeholder="Nom d'utilisateur">
+    <input id="rEmail" type="email" placeholder="Adresse Email">
+    <input id="rPass" type="password" placeholder="Mot de passe">
+    <input id="rPassConf" type="password" placeholder="Confirmer le mot de passe">
+    <button onclick="register()">Créer le compte</button>
+    <button onclick="backToLogin()" style="background:#333">⬅ Retour</button>
+    <div id="registerError" class="error-message"></div>
+</div>
+
+<div id="app" class="hidden">
+
+    <div id="sidebar" class="closed">
+        <div id="arrow" class="arrow" onclick="toggleMenu()">
+            <i class="fa-solid fa-chevron-right"></i>
+        </div>
+
+        <h3><i class="fa-solid fa-folder"></i> Catégories</h3>
+
+        <button onclick="setTabAndClose('all', event)"><i class="fa-solid fa-house"></i> Tout</button>
+        <button onclick="setTabAndClose('manga', event)"><i class="fa-solid fa-book"></i> Manga <span id="dot-manga" class="dot"></span></button>
+        <button onclick="setTabAndClose('dvd', event)"><i class="fa-solid fa-compact-disc"></i> DVD <span id="dot-dvd" class="dot"></span></button>
+        <button onclick="setTabAndClose('livre', event)"><i class="fa-solid fa-book-open"></i> Livre <span id="dot-livre" class="dot"></span></button>
+        <button onclick="setTabAndClose('carte', event)"><i class="fa-solid fa-id-card"></i> Carte <span id="dot-carte" class="dot"></span></button>
+        <button onclick="setTabAndClose('pop', event)"><i class="fa-solid fa-square"></i> Pop <span id="dot-pop" class="dot"></span></button>
+		<button onclick="setTabAndClose('jeuvideo', event)"><i class="fa-solid fa-gamepad"></i> Jeux vidéo <span id="dot-jeuvideo" class="dot"></span>
+</button>
+    </div>
+
+</div>
+
+<header class="app-header">
+    <div class="left">
+        <img id="avatar" onclick="openProfile()" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999' style='background-color:%23333333;border-radius:50%;'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" />
+        <div class="userMeta">
+            <span id="displayUser">Utilisateur</span>
+            <p id="totalUser">0 objets</p>
+        </div>
+    </div>
+
+    <h1>MyUnivers</h1>
+
+    <div class="right">
+        <div class="searchBox">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="search" placeholder="Rechercher..." oninput="render()">
+        </div>
+
+        <div class="selectBox">
+            <select id="sortOrder" onchange="render()">
+                <option value="recent">🕒 Récent</option>
+                <option value="az">🔤 A-Z</option>
+            </select>
+        </div>
+    </div>
+</header>
+
+<div class="add">
+    <input id="name" placeholder="Nom">
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <img id="preview" style="display:none; max-width:50px;">
+
+    <select id="category" onchange="toggleMangaSelect()">
+    <option value="manga">Manga</option>
+    <option value="livre">Livre</option>
+    <option value="dvd">DVD</option>
+    <option value="pop">Pop</option>
+    <option value="carte">Carte</option>
+    <option value="jeuvideo">Jeu Vidéo</option> </select>
+    </select>
+    <button onclick="addItem()">Ajouter</button>
+</div>
+
+<div id="list"></div>
+
+<div id="modifyModal" class="modifyModal hidden">
+    <div class="modifyBox">
+        <button class="backBtnModify" onclick="closeModify()">←</button>
+        <h2>Modifier</h2>
+        <input id="editName" placeholder="Nouveau nom" style="width:90%; margin-bottom:10px">
+        <select id="editCategory" style="width:90%; margin-bottom:10px">
+            <option value="manga">Manga</option>
+            <option value="dvd">DVD</option>
+            <option value="livre">Livre</option>
+            <option value="carte">Carte</option>
+            <option value="pop">Pop</option>
+			<option value="jeuvideo">Jeux vidéo</option>
+        </select>
+        <button onclick="openModifyFilePicker()" style="width:100%; margin-bottom:10px">
+            <i class="fa-solid fa-pen-to-square"></i> Choisir une image
+        </button>
+        <input type="file" id="modifyFileInput" accept="image/*" style="display:none">
+        <img id="editPreview" style="max-width:100px; display:block; margin:10px auto;">
+        <button onclick="saveChanges()" style="width:100%; margin-bottom:10px">Enregistrer</button>
+    </div>
+</div>
+
+<div id="seriesPage" class="hidden">
+    <button class="backBtnNetflix" onclick="closeSeries()">←</button>
+    <div id="seriesHero" class="seriesHero"></div>
+    <div class="librarySection">
+        <h2 class="sectionLabel">Volumes de la collection</h2>
+        <div id="seriesList"></div>
+    </div>
+</div>
+
+<div id="editMenu" class="editMenu">
+    <button onclick="deleteSelected()" style="color:#ff4444">🗑 Supprimer la sélection</button>
+</div>
+
+<div id="profileModal" class="profileModal hidden">
+    <div class="profileBox">
+        <button class="backBtnNetflixProfile" onclick="closeProfileModal()">←</button>
+        <img id="profileAvatarBig" class="profileAvatar" onclick="openAvatarPicker()" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999' style='background-color:%23333333;border-radius:50%;'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>">
+        <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+        <h2 id="profileName"></h2>
+        <button onclick="logout()" style="width: 100%; margin-top: 20px; background:#e50914; color:white; border:none; padding:10px; cursor:pointer;">
+            Déconnexion
+        </button>
+    </div>
+</div>
+
+<div id="dvdModal" class="modifyModal hidden">
+    <div class="modifyBox">
+        <button class="backBtnModify" onclick="document.getElementById('dvdModal').classList.add('hidden')">×</button>
+        <h2>Résultats trouvés</h2>
+        <div id="dvdSelectList"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>
